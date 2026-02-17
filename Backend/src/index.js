@@ -64,7 +64,7 @@ const main = require("./config/db");
 const redisClient = require("./config/redis");
 
 const cookieParser = require("cookie-parser");
-const cors = require("cors");
+// const cors = require("cors");
 
 // Routes
 const authRouter = require("./routes/userAuth");
