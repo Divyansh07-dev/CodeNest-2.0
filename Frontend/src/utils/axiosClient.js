@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const BASE_URL = 'https://codenest-2-0.onrender.com' || 'http://localhost:3000';
+console.log(BASE_URL)
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
