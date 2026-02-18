@@ -1,76 +1,142 @@
-const express = require("express");
+const express = require('express')
 const app = express();
-require("dotenv").config();
-
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-
-// DB & Redis
-const main = require("./config/db");
-const redisClient = require("./config/redis");
-
-// Routes
+require('dotenv').config();
+const main =  require('./config/db')
+const cookieParser =  require('cookie-parser');
 const authRouter = require("./routes/userAuth");
+const redisClient = require('./config/redis');
 const problemRouter = require("./routes/problemCreator");
-const submitRouter = require("./routes/submit");
-const aiRouter = require("./routes/aiChatting");
+const submitRouter = require("./routes/submit")
+const aiRouter = require("./routes/aiChatting")
 const videoRouter = require("./routes/videoCreator");
+const cors = require('cors')
 
-// ----------------------
-// ✅ CORS CONFIG (IMPORTANT)
-// ----------------------
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173", // local frontend
-      "https://codenest-2-0-frontend.onrender.com" // deployed frontend
-    ],
-    credentials: true
-  })
-);
+// console.log("Hello")
 
-// ----------------------
-// MIDDLEWARES
-// ----------------------
+// ------------------------------------------------------------------
+// **CORRECTION HERE: Allowing both localhost (for development) 
+// and the Vercel URL (for production)**
+// ------------------------------------------------------------------
+app.use(cors({
+  origin: [
+    "http://localhost:5173",                // Local development
+    "https://codenest-2-0-frontend.onrender.com" // Frontend deployed on Vercel
+  ],
+  credentials: true
+}));
+
+
 app.use(express.json());
 app.use(cookieParser());
 
-// ----------------------
-// ROUTES
-// ----------------------
-app.use("/user", authRouter);
-app.use("/problem", problemRouter);
-app.use("/submission", submitRouter);
-app.use("/ai", aiRouter);
-app.use("/video", videoRouter);
+app.use('/user',authRouter);
+app.use('/problem',problemRouter);
+app.use('/submission',submitRouter);
+app.use('/ai',aiRouter);
+app.use("/video",videoRouter);
 
-// ----------------------
-// SERVER + DB START
-// ----------------------
-const PORT = process.env.PORT || 5000;
 
-// ... existing imports ...
+const InitalizeConnection = async ()=>{
+    try{
 
-const InitalizeConnection = async () => {
-  try {
-    // 1. Connect to MongoDB first (Critical)
-    await main(); 
-    console.log("✅ MongoDB Atlas Connected");
+        await Promise.all([main(),redisClient.connect()]);
+        console.log("DB Connected");
+        
+        app.listen(process.env.PORT, ()=>{
+            console.log("Server listening at port number: "+ process.env.PORT);
+        })
 
-    // 2. Connect to Redis (Non-Critical - don't let it crash the server)
-    redisClient.connect()
-      .then(() => console.log("✅ Redis Cloud Connected"))
-      .catch((err) => console.error("⚠️ Redis Connection Failed:", err));
+    }
+    catch(err){
+        console.log("Error: "+err);
+    }
+}
 
-    // 3. START SERVER IMMEDIATELY
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server is live on port: ${PORT}`);
-    });
-
-  } catch (err) {
-    console.error("❌ Critical Startup Error (MongoDB):", err);
-    process.exit(1); 
-  }
-};
 
 InitalizeConnection();
+
+
+// const express = require("express");
+// const app = express();
+// require("dotenv").config();
+
+// const main = require("./config/db");
+// const redisClient = require("./config/redis");
+
+// const cookieParser = require("cookie-parser");
+// // const cors = require("cors");
+
+// // Routes
+// const authRouter = require("./routes/userAuth");
+// const problemRouter = require("./routes/problemCreator");
+// const submitRouter = require("./routes/submit");
+// const aiRouter = require("./routes/aiChatting");
+// const videoRouter = require("./routes/videoCreator");
+
+// // ----------------------
+// // CORS CONFIG (IMPORTANT)
+// // ----------------------
+// const cors = require("cors");
+
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "https://codenest-2-0-frontend.onrender.com"
+// ];
+
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       if (!origin) return callback(null, true); // Postman etc
+
+//       if (allowedOrigins.includes(origin)) {
+//         return callback(null, true);
+//       }
+
+//       return callback(new Error("CORS not allowed"));
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"]
+//   })
+// );
+
+// // 🔥 THIS LINE FIXES PREFLIGHT
+// app.options("*", (req, res) => {
+//   res.sendStatus(200);
+// });
+
+
+// // ----------------------
+// // MIDDLEWARES
+// // ----------------------
+// app.use(express.json());
+// app.use(cookieParser());
+
+// // ----------------------
+// // ROUTES
+// // ----------------------
+// app.use("/user", authRouter);
+// app.use("/problem", problemRouter);
+// app.use("/submission", submitRouter);
+// app.use("/ai", aiRouter);
+// app.use("/video", videoRouter);
+
+// // ----------------------
+// // SERVER START
+// // ----------------------
+// const PORT = process.env.PORT || 5000;
+
+// const InitalizeConnection = async () => {
+//   try {
+//     await Promise.all([main(), redisClient.connect()]);
+//     console.log("DB & Redis Connected");
+
+//     app.listen(PORT, () => {
+//       console.log(`Server running on port ${PORT}`);
+//     });
+//   } catch (err) {
+//     console.error("Startup Error:", err);
+//   }
+// };
+
+// InitalizeConnection();
