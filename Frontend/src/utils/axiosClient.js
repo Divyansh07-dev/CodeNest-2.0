@@ -1,22 +1,17 @@
-// utils/axiosClient.js
 import axios from 'axios';
 
-const axiosClient = axios.create({
-  baseURL: '',  // relative → uses Vite proxy in dev
-  withCredentials: true,
-  headers: { 'Content-Type': 'application/json' }
-});
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
-// Add interceptor to attach token from localStorage (if not using cookies)
-axiosClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+const axiosClient = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
   }
-  return config;
 });
 
 export default axiosClient;
+
 // import axios from 'axios';
 
 // const axiosClient = axios.create({
