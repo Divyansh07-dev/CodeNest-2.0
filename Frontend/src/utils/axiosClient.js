@@ -1,14 +1,30 @@
+// utils/axiosClient.js
 import axios from 'axios';
 
-const BASE_URL = 'https://codenest-2-0.onrender.com' || 'http://localhost:3000';
-console.log(BASE_URL)
-
 const axiosClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: '',  // relative → uses Vite proxy in dev
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json'
+  headers: { 'Content-Type': 'application/json' }
+});
+
+// Add interceptor to attach token from localStorage (if not using cookies)
+axiosClient.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
 });
 
 export default axiosClient;
+// import axios from 'axios';
+
+// const axiosClient = axios.create({
+//   baseURL: '',                     // ← must be empty string!
+//   withCredentials: true,
+//   headers: {
+//     'Content-Type': 'application/json'
+//   }
+// });
+
+// export default axiosClient;
