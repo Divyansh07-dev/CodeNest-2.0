@@ -49,20 +49,27 @@ app.use("/video", videoRouter);
 // ----------------------
 const PORT = process.env.PORT || 5000;
 
+// ... existing imports ...
+
 const InitalizeConnection = async () => {
   try {
-    await Promise.all([
-      main(),                // MongoDB Atlas
-      redisClient.connect()  // Redis
-    ]);
+    // 1. Connect to MongoDB first (Critical)
+    await main(); 
+    console.log("✅ MongoDB Atlas Connected");
 
-    console.log("✅ DB & Redis Connected");
+    // 2. Connect to Redis (Non-Critical - don't let it crash the server)
+    redisClient.connect()
+      .then(() => console.log("✅ Redis Cloud Connected"))
+      .catch((err) => console.error("⚠️ Redis Connection Failed:", err));
 
-    app.listen(PORT, () => {
-      console.log("🚀 Server listening on port:", PORT);
+    // 3. START SERVER IMMEDIATELY
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server is live on port: ${PORT}`);
     });
+
   } catch (err) {
-    console.error("❌ Startup Error:", err);
+    console.error("❌ Critical Startup Error (MongoDB):", err);
+    process.exit(1); 
   }
 };
 
