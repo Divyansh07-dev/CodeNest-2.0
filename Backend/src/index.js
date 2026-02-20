@@ -22,7 +22,7 @@ const cors = require('cors')
 app.use(cors({
   origin: [
     "http://localhost:5173", 
-    'https://codenest-2-0.onrender.com',             
+    'https://codenest-2-0-frontend.onrender.com',             
      // Frontend deployed on render
   ],
   credentials: true,
