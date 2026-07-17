@@ -8,6 +8,6 @@
 # **/package-lock.json
 # **/yarn.lock
 
-# Optional: ignore build output (if you have)
-# /dist
-# /build
+# Optional: ignore build output
+dist/
+build/
