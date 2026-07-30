@@ -15,6 +15,7 @@ const cors = require('cors')
 app.use(cors({
   origin: [
     "http://localhost:5173",
+    "https://codenest-2-0-frontend.onrender.com"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
