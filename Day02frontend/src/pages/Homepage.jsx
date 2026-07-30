@@ -3,7 +3,7 @@ import { NavLink } from 'react-router'; // Fixed import
 import { useDispatch, useSelector } from 'react-redux';
 import axiosClient from '../utils/axiosClient';
 import { logoutUser } from '../authSlice';
-import StreakHeatmap from '../components/StreakHeatmap';
+import StreakHeatmap from "../components/StreakHeatmap";
 
 function Homepage() {
   const dispatch = useDispatch();
